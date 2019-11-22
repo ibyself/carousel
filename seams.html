@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>有缝轮播</title>
+		<style>
+			*{margin: 0;padding: 0;list-style: none;}
+			.box{
+				width: 900px;
+				height:350px;
+				margin: 100px auto 0;
+				position: relative;
+				overflow: hidden;
+			}
+			.box .ulList{width:4500px;position: absolute;left:0;}
+			.box .ulList a{float:left;}
+			.box .lBtn,.box .rBtn{
+				width: 40px;
+				height:100px;
+				position: absolute;
+				left:0;
+				top:50%;
+				margin-top:-50px;
+				background: url(img/index.png) no-repeat 0 0;
+				cursor: pointer;
+			}
+			.box .rBtn{
+				left:auto;
+				right:0;
+				background-position-x: -50px;
+			}
+			.box .olList{position:absolute;right:10px;bottom:10px;}
+			.box .olList li{
+				float:left;
+				width:20px;
+				height:20px;
+				border-radius:50%;
+				background:#333;
+				color:#999;
+				border:1px solid #fff;
+				text-align:center;
+				line-height: 20px;
+				margin-left:10px;
+				cursor:pointer;
+			}
+			.box .olList li.current{color:#f60;border-color: #f60;}
+		</style>
+	</head>
+	<body>
+		<div class="box" id='box'>
+			<ul class="ulList" id="ulList">
+				<li><a href="#"><img src="img/01.jpg" alt=""></a></li>
+				<li><a href="#"><img src="img/02.jpg" alt=""></a></li>
+				<li><a href="#"><img src="img/03.jpg" alt=""></a></li>
+				<li><a href="#"><img src="img/04.jpg" alt=""></a></li>
+				<li><a href="#"><img src="img/05.jpg" alt=""></a></li>
+			</ul>
+			<ol class="olList" id="olList">
+				<li class="current">1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+				<li>5</li>
+			</ol>
+			<span class="lBtn" id="lBtn"></span>
+			<span class="rBtn" id="rBtn"></span>
+		</div>
+		<script type="text/javascript">
+			var lBtn=document.getElementById('lBtn');
+			var rBtn=document.getElementById('rBtn');
+			var ulList=document.getElementById('ulList');
+			var olList=document.getElementById('olList');
+			var box=document.getElementById('box');
+			var olNum=0;
+			//向左移动
+			lBtn.onclick=function(){
+				olNum--;
+				if(olNum<0){
+					olNum=olList.children.length-1;
+				}
+				clickMove();
+			}
+			//向右移动
+			rBtn.onclick=function(){
+				olNum++;
+				if(olNum>olList.children.length-1){
+					olNum=0;
+				}
+				clickMove();
+			}
+			//小圆点绑定点击事件
+			for (var i = 0; i < olList.children.length; i++) {
+				olList.children[i].index=i;
+				olList.children[i].onclick=function(){
+					for (var i = 0; i < olList.children.length; i++) {
+						olList.children[i].className='';
+					}
+					this.className='current';
+					animation(ulList,this.index*-box.offsetWidth);
+					olNum=this.index;
+				}
+			}
+			//点击移动
+			function clickMove(){
+				for (var i = 0; i < olList.children.length; i++) {
+					olList.children[i].className='';
+				}
+				olList.children[olNum].className='current';
+				var move=olNum*-box.offsetWidth;
+				animation(ulList,move);
+			}
+			/**
+			 * 动画函数
+			 * @param {操作的元素} obj
+			 * @param {目标位置} target
+			 * 
+			 */
+			function animation(obj,target){
+				clearInterval(obj.timer);
+				obj.timer=setInterval(function(){
+					var step=30;
+					var current=obj.offsetLeft;
+					step=target>=current?step:-step;
+					if(Math.abs(target-current)>=Math.abs(step)){
+						current+=step;
+						obj.style.left=current+'px';
+					}else{
+						obj.style.left=target+'px';
+						clearInterval(obj.timer);
+					}
+				},10)
+				
+			}
+		</script>
+	</body>
+</html>
